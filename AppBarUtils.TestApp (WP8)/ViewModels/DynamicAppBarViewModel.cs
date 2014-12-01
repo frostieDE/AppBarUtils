@@ -8,6 +8,7 @@ using Microsoft.Expression.Interactivity.Core;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System;
+using GalaSoft.MvvmLight.Command;
 
 namespace AppBarUtils.TestApp.ViewModels
 {
@@ -43,11 +44,13 @@ namespace AppBarUtils.TestApp.ViewModels
                     IsSelecting = false;
                 });
 
-            LockCommand = new ActionCommand(() => IsLocked = true);
-            UnlockCommand = new ActionCommand(() => IsLocked = false);
+            LockCommand = new RelayCommand(() => IsLocked = true, () => IsEnabled);
+            UnlockCommand = new RelayCommand(() => IsLocked = false, () => IsEnabled);
+            ToggleIsEnabledCommand = new RelayCommand(() => IsEnabled = !IsEnabled);
         }
 
         public ICommand SampleCommand { get; private set; }
+        
 
         public ObservableCollection<TodoItem> Todos { get; private set; }
 
@@ -69,8 +72,10 @@ namespace AppBarUtils.TestApp.ViewModels
 
         public ICommand DeleteCommand { get; private set; }
 
-        public ICommand LockCommand { get; private set; }
-        public ICommand UnlockCommand { get; private set; }
+        public RelayCommand LockCommand { get; private set; }
+        public RelayCommand UnlockCommand { get; private set; }
+
+        public RelayCommand ToggleIsEnabledCommand { get; private set; }
 
         public string AddButtonText
         {
@@ -101,6 +106,29 @@ namespace AppBarUtils.TestApp.ViewModels
             }
         }
 
+        private bool _isEnabled;
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    RaisePropertyChanged("IsEnabled");
+                }
+
+                if (LockCommand != null)
+                {
+                    LockCommand.RaiseCanExecuteChanged();
+                }
+
+                if (UnlockCommand != null)
+                {
+                    UnlockCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
     }
 
     public class TodoItem

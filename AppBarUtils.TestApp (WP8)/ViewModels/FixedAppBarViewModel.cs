@@ -53,8 +53,9 @@ namespace AppBarUtils.TestApp.ViewModels
             AddCommand = _addCommands[0];
             ClearCommand = new RelayCommand(() => Data.Clear(), () => ClearMenuItemIsEnabled);
 
-            LockCommand = new RelayCommand(() => IsLocked = true);
-            UnlockCommand = new RelayCommand(() => IsLocked = false);
+            LockCommand = new RelayCommand(() => IsLocked = true, () => IsEnabled);
+            UnlockCommand = new RelayCommand(() => IsLocked = false, () => IsEnabled);
+            ToggleIsEnabledCommand = new RelayCommand(() => IsEnabled = !IsEnabled);
         }
 
         #endregion
@@ -221,6 +222,21 @@ namespace AppBarUtils.TestApp.ViewModels
             }
         }
 
+        private RelayCommand _toggleIsEnabledCommand;
+        public RelayCommand ToggleIsEnabledCommand
+        {
+            get { return _toggleIsEnabledCommand; }
+            set
+            {
+                if (_toggleIsEnabledCommand != value)
+                {
+                    _toggleIsEnabledCommand = value;
+                    RaisePropertyChanged("ToggleIsEnabledCommand");
+                }
+            }
+        }
+            
+
         public void Sync()
         {
             System.Windows.MessageBox.Show("Sync completed.");
@@ -274,5 +290,31 @@ namespace AppBarUtils.TestApp.ViewModels
                 }
             }
         }
+
+        private bool _isEnabled;
+
+        public bool IsEnabled
+        {
+            get { return _isEnabled; }
+            set
+            {
+                if (_isEnabled != value)
+                {
+                    _isEnabled = value;
+                    RaisePropertyChanged("IsEnabled");
+                }
+
+                if (LockCommand != null)
+                {
+                    LockCommand.RaiseCanExecuteChanged();
+                }
+
+                if (UnlockCommand != null)
+                {
+                    UnlockCommand.RaiseCanExecuteChanged();
+                }
+            }
+        }
+
     }
 }

@@ -85,6 +85,13 @@
                     <CheckBox Content="Enable clear menu item" IsChecked="{Binding ClearMenuItemIsEnabled, Mode=TwoWay}"/>
                 </StackPanel>
             </controls:PivotItem>
+            
+            <!-- Pivot item three -->
+            <controls:PivotItem Header="test">
+                <StackPanel>
+                    <Button Command="{Binding ToggleIsEnabledCommand}">toggle IsEnabled</Button>
+                </StackPanel>
+            </controls:PivotItem>
         </controls:Pivot>
     </Grid>
 
